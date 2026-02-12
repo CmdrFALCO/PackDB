@@ -21,6 +21,7 @@ class Field(Base):
     sort_order: Mapped[int] = mapped_column(default=0)
     description: Mapped[Optional[str]] = mapped_column()
     created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id"))
+    is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     __table_args__ = (

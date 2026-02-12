@@ -38,10 +38,24 @@ packdb/
 │   │   │   ├── attachment.py   — File attachments (table only, no endpoints yet)
 │   │   │   └── component.py    — Shared components + pack_components junction
 │   │   ├── schemas/            — Pydantic v2 request/response models
-│   │   │   └── user.py         — UserRegister, UserLogin, UserResponse, TokenResponse
+│   │   │   ├── user.py         — UserRegister, UserLogin, UserResponse, TokenResponse
+│   │   │   ├── pack.py         — PackCreate, PackUpdate, PackResponse, PackListResponse
+│   │   │   ├── domain.py       — DomainCreate, DomainResponse
+│   │   │   ├── field.py        — FieldCreate, FieldUpdate, FieldResponse
+│   │   │   ├── value.py        — ValueCreate/Update/Response, ResolvedFieldValue, PackDetailResponse, CompareResponse
+│   │   │   ├── comment.py      — CommentCreate, CommentResponse
+│   │   │   └── source_priority.py — SourcePriorityResponse, SourcePriorityUpdate
 │   │   ├── routers/            — API route handlers
-│   │   │   └── auth.py         — /api/auth/register, /api/auth/login, /api/auth/me
-│   │   ├── services/           — Business logic (empty, ready for Phase 1B)
+│   │   │   ├── auth.py         — /api/auth/register, /api/auth/login, /api/auth/me
+│   │   │   ├── packs.py        — /api/packs CRUD (list, create, detail, update, soft delete)
+│   │   │   ├── domains.py      — /api/domains (list, create, list fields, add field)
+│   │   │   ├── fields.py       — /api/fields (update, soft delete)
+│   │   │   ├── values.py       — /api/packs/{id}/values, /api/values/{id} (CRUD with source attribution)
+│   │   │   ├── comments.py     — /api/values/{id}/comments (list, create)
+│   │   │   ├── compare.py      — /api/compare?ids=1,2,3 (side-by-side pack comparison)
+│   │   │   └── source_priorities.py — /api/preferences/sources (get/update priority order)
+│   │   ├── services/           — Business logic
+│   │   │   └── value_resolver.py — resolve_pack_values(): resolves best value per field by user priority
 │   │   └── utils/
 │   │       ├── security.py     — JWT creation/validation, password hashing
 │   │       └── deps.py         — get_current_user FastAPI dependency
@@ -84,10 +98,15 @@ docker compose exec backend python scripts/seed_domains.py
 
 ## Current State
 
-**Phase 1A complete:**
-- Project scaffold with Docker Compose
-- All database tables created via Alembic
-- Auth endpoints (register, login, me)
-- 7 default domains seeded with 40 starter fields
+**Phase 1B complete:**
+- All Phase 1A items (scaffold, models, auth, seeding)
+- Pack CRUD with filters, search, pagination, sorting
+- Domain and field management endpoints
+- Value endpoints with multi-source attribution
+- Value resolver service (per-user source priority)
+- Comments on field values
+- Side-by-side pack comparison (2-3 packs)
+- Source priority management (per-user preference)
+- Field soft delete support (is_active column, migration 002)
 
-**Next: Phase 1B** — Pack CRUD, domain/field CRUD, value endpoints with multi-source resolution
+**Next: Phase 2A** — Frontend: Pack browser + detail views

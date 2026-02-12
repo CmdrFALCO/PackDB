@@ -6,7 +6,7 @@ from alembic.config import Config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import auth
+from app.routers import auth, packs, domains, fields, values, comments, compare, source_priorities
 
 
 def run_migrations():
@@ -159,6 +159,13 @@ app.add_middleware(
 
 # Routers
 app.include_router(auth.router)
+app.include_router(packs.router)
+app.include_router(domains.router)
+app.include_router(fields.router)
+app.include_router(values.router)
+app.include_router(comments.router)
+app.include_router(compare.router)
+app.include_router(source_priorities.router)
 
 
 @app.get("/api/health")
