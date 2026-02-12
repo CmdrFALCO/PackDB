@@ -24,8 +24,13 @@ export default function RegisterPage() {
       navigate('/', { replace: true });
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { detail?: string } } };
-        setError(axiosErr.response?.data?.detail || 'Registration failed');
+        const axiosErr = err as { response?: { data?: { detail?: unknown } } };
+        const detail = axiosErr.response?.data?.detail;
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else {
+          setError('Registration failed');
+        }
       } else {
         setError('Registration failed. Please try again.');
       }

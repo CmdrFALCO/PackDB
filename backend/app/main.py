@@ -10,7 +10,10 @@ from app.routers import auth, packs, domains, fields, values, comments, compare,
 
 
 def run_migrations():
-    alembic_cfg = Config("/app/alembic.ini")
+    import os
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    alembic_cfg = Config(os.path.join(base_dir, "alembic.ini"))
+    alembic_cfg.set_main_option("script_location", os.path.join(base_dir, "alembic"))
     command.upgrade(alembic_cfg, "head")
 
 
@@ -151,7 +154,7 @@ app = FastAPI(title="PackDB", version="0.1.0", lifespan=lifespan)
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

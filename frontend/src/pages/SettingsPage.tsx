@@ -1,9 +1,10 @@
+import SourcePriorityEditor from '@/components/settings/SourcePriorityEditor';
+
 export default function SettingsPage() {
   return (
-    <div className="flex items-center justify-center py-20">
-      <p className="text-lg text-muted-foreground">
-        Settings — coming in Phase 2C
-      </p>
+    <div className="space-y-6">
+      <h1 className="text-xl font-semibold text-foreground">Settings</h1>
+      <SourcePriorityEditor />
     </div>
   );
 }

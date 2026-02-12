@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '@/types';
 import * as authApi from '@/api/auth';
@@ -21,9 +21,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
   const [isLoading, setIsLoading] = useState(true);
+  const didValidate = useRef(false);
 
+  // Only validate stored token on initial mount
   useEffect(() => {
-    if (!token) {
+    if (didValidate.current) return;
+    didValidate.current = true;
+
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    if (!storedToken) {
       setIsLoading(false);
       return;
     }
@@ -41,20 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [token]);
+  }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authApi.login(email, password);
     localStorage.setItem(TOKEN_KEY, response.access_token);
     setToken(response.access_token);
     setUser(response.user);
+    setIsLoading(false);
   }, []);
 
   const register = useCallback(async (email: string, password: string, displayName: string) => {
-    await authApi.register(email, password, displayName);
-    // Auto-login after registration
-    await login(email, password);
-  }, [login]);
+    const response = await authApi.register(email, password, displayName);
+    localStorage.setItem(TOKEN_KEY, response.access_token);
+    setToken(response.access_token);
+    setUser(response.user);
+    setIsLoading(false);
+  }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);

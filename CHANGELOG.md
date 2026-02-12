@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed — Runtime & Integration Fixes
+
+- **Auth API format**: Changed login from form-encoded `username` field to JSON body with `email` field to match backend `UserLogin` schema; fixed register return type from `User` to `TokenResponse`
+- **Auth context stability**: Replaced `useEffect([token])` with `useRef`-gated run-once mount validation to prevent re-calling `getMe()` on every token change; login/register now set user directly from response
+- **401 interceptor**: Removed hard `window.location.href` redirect that wiped React state; interceptor now only clears localStorage token, letting AuthContext handle the redirect
+- **FastAPI trailing-slash redirects**: Added trailing slashes to `/packs/` and `/domains/` API calls to prevent 307 redirects that drop the Authorization header
+- **Pydantic error rendering**: Fixed LoginPage and RegisterPage to check `typeof detail === 'string'` before rendering, preventing "Objects are not valid as a React child" crash from FastAPI's array-of-objects validation error format
+- **Dialog accessibility warnings**: Added `DialogDescription` to PackFormDialog, AddValueDialog, and AddFieldDialog to resolve Radix UI "Missing Description for DialogContent" console warnings
+- **CORS origins**: Added `localhost:5173` to backend CORS allowed origins for Vite dev server
+- **Alembic config path**: Changed hardcoded Docker path `/app/alembic.ini` to relative `os.path` resolution for local development
+
+### Added — Phase 2C: Pack Detail + Compare View + Settings
+
+- **PackDetailPage**: Full pack header (OEM, model, variant, year, market/fuel type/vehicle class/drivetrain/platform badges), domain tabs with field rows, loading skeletons, error/not-found state, "Back to Browse" navigation
+- **DomainTabs component**: Renders domains as shadcn Tabs sorted by `sort_order`; each tab shows its FieldRow list + "Add Field" button; empty-domain placeholder
+- **FieldRow component**: Displays field name + unit, resolved value, colored SourceBadge, "+N sources" expander; inline multi-source view showing all values with source badge, source detail, contributor, date, comment icon + count; edit/delete buttons per value
+- **SourceBadge component**: Reusable colored badge using CSS custom properties (`--color-source-*`) and `SOURCE_DISPLAY` labels; used across PackDetail, CompareTable, and SourcePriorityEditor
+- **AddValueDialog component**: Shared add/edit value dialog with value text input, source type select (8 types), source detail textarea; `useMutation` with pack query invalidation and toast feedback
+- **AddFieldDialog component**: Add field dialog with display name (auto-generates snake_case internal name), unit, data type select (text/number/select), conditional select options input; `useMutation` with pack query invalidation
+- **CommentsSection component**: Inline expandable comment list per value; fetches with `useQuery(['comments', valueId])`; add comment form with `useMutation` and toast
+- **ComparePage**: Reads pack IDs from URL query string (`/compare?ids=1,2,3`), calls `comparePacks`, renders CompareTable; remove pack from comparison (redirects to browse if <2 remain); loading/error states
+- **CompareTable component**: Side-by-side table with pack header columns (click navigates to pack detail), domain section headers, field rows with resolved value + source badge per pack, "—" for missing values, remove button per pack column
+- **SettingsPage**: Source Priority section with SourcePriorityEditor
+- **SourcePriorityEditor component**: Numbered list of 8 source types with colored badges; up/down arrow buttons to reorder; Save button calls `updateSourcePriority` and invalidates pack/compare queries; Reset to Default button restores standard priority order
+- **shadcn/ui components**: Installed textarea, separator, tooltip
+
 ### Added — Phase 2B: Pack Browser (Card Grid + Filters + Compare)
 
 - **Pack Browser page**: Full replacement of placeholder with filter bar, card grid, pagination, compare selection, and add/edit/delete dialogs

@@ -2,7 +2,7 @@ import client from './client';
 import type { Domain, Field } from '@/types';
 
 export async function listDomains(): Promise<Domain[]> {
-  const response = await client.get<Domain[]>('/domains');
+  const response = await client.get<Domain[]>('/domains/');
   return response.data;
 }
 

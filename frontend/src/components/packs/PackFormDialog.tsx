@@ -6,6 +6,7 @@ import { createPack, updatePack } from '@/api/packs';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -139,6 +140,9 @@ export default function PackFormDialog({ open, onOpenChange, pack }: PackFormDia
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Edit Pack' : 'Add Pack'}</DialogTitle>
+          <DialogDescription>
+            {isEdit ? 'Update pack details below.' : 'Enter the details for the new battery pack.'}
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">

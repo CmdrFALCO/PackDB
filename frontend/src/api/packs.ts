@@ -18,7 +18,7 @@ export interface PackListParams {
 }
 
 export async function listPacks(params?: PackListParams): Promise<PackListResponse> {
-  const response = await client.get<PackListResponse>('/packs', { params });
+  const response = await client.get<PackListResponse>('/packs/', { params });
   return response.data;
 }
 
@@ -38,7 +38,7 @@ export async function createPack(data: {
   drivetrain?: string;
   platform?: string;
 }): Promise<Pack> {
-  const response = await client.post<Pack>('/packs', data);
+  const response = await client.post<Pack>('/packs/', data);
   return response.data;
 }
 

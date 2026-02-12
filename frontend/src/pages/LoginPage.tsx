@@ -23,8 +23,13 @@ export default function LoginPage() {
       navigate('/', { replace: true });
     } catch (err: unknown) {
       if (err && typeof err === 'object' && 'response' in err) {
-        const axiosErr = err as { response?: { data?: { detail?: string } } };
-        setError(axiosErr.response?.data?.detail || 'Invalid credentials');
+        const axiosErr = err as { response?: { data?: { detail?: unknown } } };
+        const detail = axiosErr.response?.data?.detail;
+        if (typeof detail === 'string') {
+          setError(detail);
+        } else {
+          setError('Invalid credentials');
+        }
       } else {
         setError('Login failed. Please try again.');
       }

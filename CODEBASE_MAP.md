@@ -73,8 +73,8 @@ packdb/
 │       ├── main.tsx            — React root + QueryClientProvider + AuthProvider
 │       ├── App.tsx             — React Router v6 setup with protected/public routes
 │       ├── api/
-│       │   ├── client.ts       — Axios instance with JWT auto-attach + 401 handling
-│       │   ├── auth.ts         — login (form-encoded), register, getMe
+│       │   ├── client.ts       — Axios instance with JWT auto-attach + 401 token clear (no hard redirect)
+│       │   ├── auth.ts         — login (JSON email+password), register, getMe
 │       │   ├── packs.ts        — listPacks, getPack, createPack, updatePack, deletePack
 │       │   ├── domains.ts      — listDomains, listFields, createField
 │       │   ├── values.ts       — createValue, updateValue, deleteValue
@@ -82,7 +82,7 @@ packdb/
 │       │   ├── compare.ts      — comparePacks
 │       │   └── sourcePriority.ts — getSourcePriority, updateSourcePriority
 │       ├── context/
-│       │   └── AuthContext.tsx  — Auth state, login/register/logout, token validation
+│       │   └── AuthContext.tsx  — Auth state, login/register/logout, run-once token validation on mount
 │       ├── components/
 │       │   ├── layout/
 │       │   │   └── MainLayout.tsx — Header (PackDB + user + logout) + content area
@@ -93,14 +93,25 @@ packdb/
 │       │   │   ├── PackFormDialog.tsx — Shared Add/Edit pack dialog with form + useMutation
 │       │   │   ├── DeletePackDialog.tsx — Delete confirmation dialog with useMutation
 │       │   │   └── CompareButton.tsx  — Floating compare button (2–3 packs selected)
-│       │   └── ui/             — shadcn/ui components (button, input, label, card, dialog, tabs, badge, dropdown-menu, sonner, select, skeleton, checkbox)
+│       │   ├── detail/
+│       │   │   ├── SourceBadge.tsx    — Reusable colored source type badge (CSS vars + SOURCE_DISPLAY)
+│       │   │   ├── DomainTabs.tsx     — Domain tab container with FieldRow lists + Add Field button
+│       │   │   ├── FieldRow.tsx       — Field display: resolved value, source badge, multi-source expander, edit/delete
+│       │   │   ├── AddValueDialog.tsx — Add/Edit value dialog (value, source type, source detail)
+│       │   │   ├── AddFieldDialog.tsx — Add field dialog (display name, unit, data type, select options)
+│       │   │   └── CommentsSection.tsx — Inline comment list + add form for a value
+│       │   ├── compare/
+│       │   │   └── CompareTable.tsx   — Side-by-side comparison table grouped by domain
+│       │   ├── settings/
+│       │   │   └── SourcePriorityEditor.tsx — Reorder source priorities with up/down arrows, save/reset
+│       │   └── ui/             — shadcn/ui components (button, input, label, card, dialog, tabs, badge, dropdown-menu, sonner, select, skeleton, checkbox, textarea, separator, tooltip)
 │       ├── pages/
 │       │   ├── LoginPage.tsx   — Login form with error handling
 │       │   ├── RegisterPage.tsx — Registration form with auto-login
 │       │   ├── BrowserPage.tsx — Pack browser: filters, card grid, pagination, compare selection, CRUD dialogs
-│       │   ├── PackDetailPage.tsx — Pack detail (placeholder for Phase 2C)
-│       │   ├── ComparePage.tsx — Compare view (placeholder for Phase 2C)
-│       │   └── SettingsPage.tsx — Settings (placeholder for Phase 2C)
+│       │   ├── PackDetailPage.tsx — Pack detail: header, domain tabs, field rows with source attribution
+│       │   ├── ComparePage.tsx — Side-by-side pack comparison from URL query params
+│       │   └── SettingsPage.tsx — Settings: source priority editor
 │       ├── types/
 │       │   └── index.ts        — TypeScript interfaces matching backend schemas
 │       ├── hooks/              — Custom hooks (ready for Phase 2B)
@@ -154,17 +165,19 @@ docker compose exec backend python scripts/seed_domains.py
 
 ## Current State
 
-**Phase 2B complete:**
+**Phase 2C complete:**
 - All Phase 1A + 1B backend items (scaffold, models, auth, CRUD, value resolver, compare, comments)
 - Frontend auth flow: login/register with JWT token management
 - Protected routing with auto-redirect to /login
 - Layout shell with dark-themed header
 - Tailwind CSS v4 with permanent dark theme
-- shadcn/ui components initialized (+ select, skeleton, checkbox)
+- shadcn/ui components initialized (+ select, skeleton, checkbox, textarea, separator, tooltip)
 - API client with JWT auto-attach and 401 handling
 - TanStack Query configured
 - TypeScript types matching all backend schemas
 - Pack Browser page: card grid, filter bar, pagination, compare selection, add/edit/delete pack dialogs, toast notifications
-- Placeholder pages for Pack Detail, Compare, Settings
+- Pack Detail page: pack header with metadata badges, domain tabs, field rows with resolved value + source badge, multi-source expansion with all values/contributor/date/comments, add/edit/delete value dialogs, add field dialog
+- Compare page: side-by-side table from URL query params, domain-grouped fields, remove pack from comparison
+- Settings page: source priority editor with up/down reordering, save/reset, invalidates pack queries on save
 
-**Next: Phase 2C** — Pack detail page, compare view, settings
+**Next: Phase 3** — Remaining features (attachments, bulk import, etc.)
