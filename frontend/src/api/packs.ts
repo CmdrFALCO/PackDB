@@ -9,6 +9,8 @@ export interface PackListParams {
   fuel_type?: string;
   vehicle_class?: string;
   market?: string;
+  drivetrain?: string;
+  platform?: string;
   year_min?: number;
   year_max?: number;
   sort_by?: string;

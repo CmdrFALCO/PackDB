@@ -86,11 +86,18 @@ packdb/
 │       ├── components/
 │       │   ├── layout/
 │       │   │   └── MainLayout.tsx — Header (PackDB + user + logout) + content area
-│       │   └── ui/             — shadcn/ui components (button, input, label, card, dialog, tabs, badge, dropdown-menu, sonner)
+│       │   ├── packs/
+│       │   │   ├── PackCard.tsx       — Pack card: OEM, model/variant, year, badges, checkbox, 3-dot menu
+│       │   │   ├── PackCardGrid.tsx   — Responsive grid with loading skeletons and empty states
+│       │   │   ├── FilterBar.tsx      — Search + Market/FuelType/VehicleClass/Drivetrain selects
+│       │   │   ├── PackFormDialog.tsx — Shared Add/Edit pack dialog with form + useMutation
+│       │   │   ├── DeletePackDialog.tsx — Delete confirmation dialog with useMutation
+│       │   │   └── CompareButton.tsx  — Floating compare button (2–3 packs selected)
+│       │   └── ui/             — shadcn/ui components (button, input, label, card, dialog, tabs, badge, dropdown-menu, sonner, select, skeleton, checkbox)
 │       ├── pages/
 │       │   ├── LoginPage.tsx   — Login form with error handling
 │       │   ├── RegisterPage.tsx — Registration form with auto-login
-│       │   ├── BrowserPage.tsx — Pack browser (placeholder for Phase 2B)
+│       │   ├── BrowserPage.tsx — Pack browser: filters, card grid, pagination, compare selection, CRUD dialogs
 │       │   ├── PackDetailPage.tsx — Pack detail (placeholder for Phase 2C)
 │       │   ├── ComparePage.tsx — Compare view (placeholder for Phase 2C)
 │       │   └── SettingsPage.tsx — Settings (placeholder for Phase 2C)
@@ -147,16 +154,17 @@ docker compose exec backend python scripts/seed_domains.py
 
 ## Current State
 
-**Phase 2A complete:**
+**Phase 2B complete:**
 - All Phase 1A + 1B backend items (scaffold, models, auth, CRUD, value resolver, compare, comments)
 - Frontend auth flow: login/register with JWT token management
 - Protected routing with auto-redirect to /login
 - Layout shell with dark-themed header
 - Tailwind CSS v4 with permanent dark theme
-- shadcn/ui components initialized
+- shadcn/ui components initialized (+ select, skeleton, checkbox)
 - API client with JWT auto-attach and 401 handling
 - TanStack Query configured
 - TypeScript types matching all backend schemas
-- Placeholder pages for Pack Browser, Pack Detail, Compare, Settings
+- Pack Browser page: card grid, filter bar, pagination, compare selection, add/edit/delete pack dialogs, toast notifications
+- Placeholder pages for Pack Detail, Compare, Settings
 
-**Next: Phase 2B** — Pack browser card grid with filters
+**Next: Phase 2C** — Pack detail page, compare view, settings

@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added — Phase 2B: Pack Browser (Card Grid + Filters + Compare)
+
+- **Pack Browser page**: Full replacement of placeholder with filter bar, card grid, pagination, compare selection, and add/edit/delete dialogs
+- **PackCard component**: Displays OEM (bold), model + variant, year, market badge, fuel type badge, platform; click navigates to `/packs/:id`; hover-visible checkbox for compare selection; hover-visible 3-dot menu with Edit and Delete actions
+- **PackCardGrid component**: Responsive grid (1 col mobile, 2 tablet, 3–4 desktop); skeleton loading state; contextual empty states ("No battery packs yet" vs "No packs match your filters")
+- **FilterBar component**: Search input (searches OEM, model, variant, platform) + Select dropdowns for Market, Fuel Type, Vehicle Class, Drivetrain; all filters reset page to 1; "Clear" button resets all filters
+- **PackFormDialog component**: Shared dialog for Add Pack and Edit Pack; form fields: OEM, Model, Year, Variant, Market, Fuel Type, Vehicle Class, Drivetrain, Platform; uses `useMutation` with query invalidation and toast notifications; inline error display for unique constraint violations
+- **DeletePackDialog component**: Confirmation dialog for soft delete with `useMutation`, query invalidation, and toast feedback
+- **CompareButton component**: Floating bottom-center button appears when 2–3 packs selected; navigates to `/compare?ids=...`; max 3 selection enforced with toast warning; clear selection button
+- **Pagination**: Previous/Next controls with "Showing X–Y of Z packs" and page indicator; 20 packs per page
+- **Toast notifications**: Sonner `<Toaster>` added to App.tsx with dark theme; success/error toasts for all CRUD operations
+- **shadcn/ui components**: Installed select, skeleton, checkbox
+- **PackListParams fix**: Added missing `drivetrain` and `platform` fields to match backend query params
+
 ### Added — Phase 2A: Auth Flow + Layout Shell + Dark Theme
 
 - **Frontend dependencies**: react-router-dom, @tanstack/react-query, axios, Tailwind CSS v4, shadcn/ui, lucide-react
