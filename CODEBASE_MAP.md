@@ -64,20 +64,71 @@ packdb/
 ├── frontend/
 │   ├── Dockerfile              — Multi-stage: Node build → Nginx serve
 │   ├── nginx.conf              — Serves SPA, proxies /api/ to backend
-│   ├── package.json            — React 18, Vite, TypeScript
-│   ├── tsconfig.json           — TypeScript config
-│   ├── vite.config.ts          — Vite config
+│   ├── package.json            — React 18, Vite, TypeScript, Tailwind v4, shadcn/ui
+│   ├── tsconfig.json           — TypeScript config with @/ path alias
+│   ├── vite.config.ts          — Vite + Tailwind plugin + /api proxy to backend
+│   ├── components.json         — shadcn/ui configuration
 │   ├── index.html              — Entry HTML
 │   └── src/
-│       ├── main.tsx            — React root render
-│       ├── App.tsx             — Placeholder landing page
+│       ├── main.tsx            — React root + QueryClientProvider + AuthProvider
+│       ├── App.tsx             — React Router v6 setup with protected/public routes
+│       ├── api/
+│       │   ├── client.ts       — Axios instance with JWT auto-attach + 401 handling
+│       │   ├── auth.ts         — login (form-encoded), register, getMe
+│       │   ├── packs.ts        — listPacks, getPack, createPack, updatePack, deletePack
+│       │   ├── domains.ts      — listDomains, listFields, createField
+│       │   ├── values.ts       — createValue, updateValue, deleteValue
+│       │   ├── comments.ts     — listComments, createComment
+│       │   ├── compare.ts      — comparePacks
+│       │   └── sourcePriority.ts — getSourcePriority, updateSourcePriority
+│       ├── context/
+│       │   └── AuthContext.tsx  — Auth state, login/register/logout, token validation
+│       ├── components/
+│       │   ├── layout/
+│       │   │   └── MainLayout.tsx — Header (PackDB + user + logout) + content area
+│       │   └── ui/             — shadcn/ui components (button, input, label, card, dialog, tabs, badge, dropdown-menu, sonner)
+│       ├── pages/
+│       │   ├── LoginPage.tsx   — Login form with error handling
+│       │   ├── RegisterPage.tsx — Registration form with auto-login
+│       │   ├── BrowserPage.tsx — Pack browser (placeholder for Phase 2B)
+│       │   ├── PackDetailPage.tsx — Pack detail (placeholder for Phase 2C)
+│       │   ├── ComparePage.tsx — Compare view (placeholder for Phase 2C)
+│       │   └── SettingsPage.tsx — Settings (placeholder for Phase 2C)
+│       ├── types/
+│       │   └── index.ts        — TypeScript interfaces matching backend schemas
+│       ├── hooks/              — Custom hooks (ready for Phase 2B)
+│       ├── styles/
+│       │   └── globals.css     — Tailwind v4 imports + PackDB dark theme variables
+│       ├── lib/
+│       │   └── utils.ts        — cn() utility for Tailwind class merging
 │       └── vite-env.d.ts       — Vite type declarations
 │
 └── scripts/
     └── seed_domains.py         — Seeds 7 default domains + 40 starter fields
 ```
 
-## How to Run
+## How to Run (Development)
+
+**Backend:**
+```bash
+cd backend
+uvicorn app.main:app --reload
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm run dev
+```
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:8000
+- **Swagger UI:** http://localhost:8000/docs
+- **Health check:** http://localhost:8000/api/health
+
+The Vite dev server proxies `/api` requests to the backend at `localhost:8000`.
+
+## How to Run (Docker)
 
 ```bash
 docker compose up --build
@@ -85,8 +136,6 @@ docker compose up --build
 
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8000
-- **Swagger UI:** http://localhost:8000/docs
-- **Health check:** http://localhost:8000/api/health
 
 ## How to Seed
 
@@ -98,15 +147,16 @@ docker compose exec backend python scripts/seed_domains.py
 
 ## Current State
 
-**Phase 1B complete:**
-- All Phase 1A items (scaffold, models, auth, seeding)
-- Pack CRUD with filters, search, pagination, sorting
-- Domain and field management endpoints
-- Value endpoints with multi-source attribution
-- Value resolver service (per-user source priority)
-- Comments on field values
-- Side-by-side pack comparison (2-3 packs)
-- Source priority management (per-user preference)
-- Field soft delete support (is_active column, migration 002)
+**Phase 2A complete:**
+- All Phase 1A + 1B backend items (scaffold, models, auth, CRUD, value resolver, compare, comments)
+- Frontend auth flow: login/register with JWT token management
+- Protected routing with auto-redirect to /login
+- Layout shell with dark-themed header
+- Tailwind CSS v4 with permanent dark theme
+- shadcn/ui components initialized
+- API client with JWT auto-attach and 401 handling
+- TanStack Query configured
+- TypeScript types matching all backend schemas
+- Placeholder pages for Pack Browser, Pack Detail, Compare, Settings
 
-**Next: Phase 2A** — Frontend: Pack browser + detail views
+**Next: Phase 2B** — Pack browser card grid with filters
