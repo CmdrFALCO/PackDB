@@ -1,0 +1,12 @@
+.env
+.claude/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.vite/
+backend/uploads/*
+!backend/uploads/.gitkeep
+postgres_data/
+*.egg-info/
+.pytest_cache/
